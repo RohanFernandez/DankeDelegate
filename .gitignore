@@ -1,3 +1,10 @@
+# DankeDelegate
+DankeDelegate/x32
+DankeDelegate/x64
+DankeDelegate/.vs
+DankeDelegate/Debug
+DankeDelegate/Release
+
 # Prerequisites
 *.d
 
