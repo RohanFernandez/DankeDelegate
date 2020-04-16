@@ -13,11 +13,25 @@ namespace ns_fretBuzz
 	class Delegate <T_RET_TYPE(T_ARGS...)>
 	{
 		private:
-
 			using T_ACTION = Action<T_RET_TYPE(T_ARGS...)>;
 
 			///Set to store all the Actions of the same type
 			std::vector<T_ACTION> m_vectActions;
+
+			//removes action given if found
+			void remove(T_ACTION& a_Action)
+			{
+				for (typename std::vector<T_ACTION>::iterator l_iterator = m_vectActions.begin();
+					l_iterator != m_vectActions.end();
+					l_iterator++)
+				{
+					if (l_iterator->isActionEqual(a_Action))
+					{
+						m_vectActions.erase(l_iterator);
+						break;
+					}
+				}
+			}
 
 		public:
 
@@ -40,6 +54,17 @@ namespace ns_fretBuzz
 			void Add()
 			{
 				m_vectActions.emplace_back(T_ACTION::template GetAction<T_METHOD>());
+			}
+
+			///Adds an static or global action into the list
+			void Add(Delegate<T_RET_TYPE(T_ARGS...)>& a_Delegate)
+			{
+				for (typename std::vector<T_ACTION>::iterator l_iterator = a_Delegate.m_vectActions.begin();
+					l_iterator != a_Delegate.m_vectActions.end();
+					l_iterator++)
+				{
+					m_vectActions.emplace_back(T_ACTION::GetAction(*l_iterator));
+				}
 			}
 
 			T_RET_TYPE operator()(T_ARGS... a_Args)
@@ -80,47 +105,34 @@ namespace ns_fretBuzz
 			template<typename T_CLASS_TYPE, T_RET_TYPE(T_CLASS_TYPE::* T_METHOD)(T_ARGS...)>
 			void Remove(T_CLASS_TYPE* a_Instance)
 			{
-				for (typename std::vector<T_ACTION>::iterator l_iterator = m_vectActions.begin();
-					l_iterator != m_vectActions.end();
-					l_iterator++)
-				{
-					if (l_iterator->isActionEqual<T_CLASS_TYPE, T_METHOD>(a_Instance))
-					{
-						m_vectActions.erase(l_iterator);
-						break;
-					}
-				}
+				T_ACTION l_Action = T_ACTION::template GetAction<T_CLASS_TYPE, T_METHOD>(a_Instance);
+				remove(l_Action);
 			}
 
 			///removes a const member function into the delegate list
 			template<typename T_CLASS_TYPE, T_RET_TYPE(T_CLASS_TYPE::* T_METHOD)(T_ARGS...) const>
 			void Remove(T_CLASS_TYPE* const a_Instance)
 			{
-				for (typename std::vector<T_ACTION>::iterator l_iterator = m_vectActions.begin();
-					l_iterator != m_vectActions.end();
-					l_iterator++)
-				{
-					if (l_iterator->isActionEqual<T_CLASS_TYPE, T_METHOD>(a_Instance))
-					{
-						m_vectActions.erase(l_iterator);
-						break;
-					}
-				}
+				T_ACTION l_Action = T_ACTION::template GetAction<T_CLASS_TYPE, T_METHOD>(a_Instance);
+				remove(l_Action);
 			}
 
 			///removes an static or global action into the list
 			template<T_RET_TYPE(*T_METHOD)(T_ARGS...)>
 			void Remove()
 			{
-				for (typename std::vector<T_ACTION>::iterator l_iterator = m_vectActions.begin();
-					l_iterator != m_vectActions.end();
+				T_ACTION l_Action = T_ACTION::template GetAction<T_METHOD>();
+				remove(l_Action);
+			}
+
+			///removes all actions in the delegate if it exists
+			void Remove(Delegate<T_RET_TYPE(T_ARGS...)>& a_Delegate)
+			{
+				for (typename std::vector<T_ACTION>::iterator l_iterator = a_Delegate.m_vectActions.begin();
+					l_iterator != a_Delegate.m_vectActions.end();
 					l_iterator++)
 				{
-					if (l_iterator->isActionEqual<T_METHOD>())
-					{
-						m_vectActions.erase(l_iterator);
-						break;
-					}
+					remove(*l_iterator);
 				}
 			}
 

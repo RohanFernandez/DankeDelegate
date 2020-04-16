@@ -41,11 +41,18 @@ int main()
 {
 	///testing fuzzy delegates
 	doClass testDoClass;
+	doClass testDoClass1;
 	ns_fretBuzz::Delegate<int(int)> fuzzDele;
 	fuzzDele.Add<doClass, &doClass::printThis1>(&testDoClass);
 	fuzzDele.Add<doClass, &doClass::printThis2>(&testDoClass);
 	fuzzDele.Add<&doClass::printThis3>();
 	fuzzDele.Add <&printThis4>();
+
+	ns_fretBuzz::Delegate<int(int)> fuzzDele1;
+	fuzzDele1.Add<doClass, &doClass::printThis1>(&testDoClass1);
+	fuzzDele1.Add<doClass, &doClass::printThis2>(&testDoClass1);
+	fuzzDele1.Add<&doClass::printThis3>();
+	fuzzDele1.Add <&printThis4>();
 
 	executeDelegate(fuzzDele);
 
@@ -71,6 +78,16 @@ int main()
 
 	system("pause");
 
+	fuzzDele.Add(fuzzDele1);
+	executeDelegate(fuzzDele);
+	system("pause");
+
+	fuzzDele1.Remove<doClass, &doClass::printThis1>(&testDoClass);
+	executeDelegate(fuzzDele1);
+	system("pause");
+
+
+	fuzzDele.Remove(fuzzDele1);
 	executeDelegate(fuzzDele);
 	system("pause");
 
