@@ -124,8 +124,8 @@ namespace ns_fretBuzz
 
 		void operator=(Action&& a_Action)
 		{
-			this->m_pFuncStub = a_Action.m_pFuncStub;
-			this->m_pObjectPtr = a_Action.m_pObjectPtr;
+			m_pFuncStub = a_Action.m_pFuncStub;
+			m_pObjectPtr = a_Action.m_pObjectPtr;
 		}
 
 		///Constructor

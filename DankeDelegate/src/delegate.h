@@ -13,6 +13,8 @@ namespace ns_fretBuzz
 	class Delegate <T_RET_TYPE(T_ARGS...)>
 	{
 		private:
+			bool m_bIsReturnable = false;
+
 			using T_ACTION = Action<T_RET_TYPE(T_ARGS...)>;
 
 			///Set to store all the Actions of the same type
@@ -33,7 +35,15 @@ namespace ns_fretBuzz
 				}
 			}
 
+
 		public:
+			Delegate()
+			{
+				if (typeid(T_RET_TYPE) != typeid(void))
+				{
+					m_bIsReturnable = true;
+				}
+			}
 
 			///Adds a member function into the delegate list
 			template<typename T_CLASS_TYPE, T_RET_TYPE(T_CLASS_TYPE::*T_METHOD)(T_ARGS...)>
@@ -82,17 +92,18 @@ namespace ns_fretBuzz
 						throw std::out_of_range("Delegate is empty\n");
 					}
 
-					T_RET_TYPE l_tReturn;
+					typename std::vector<T_ACTION>::iterator l_LastIterator = m_vectActions.end() - 1;
 					for (typename std::vector<T_ACTION>::iterator l_iterator = m_vectActions.begin();
 						l_iterator != m_vectActions.end();
 						l_iterator++)
 					{
-						l_tReturn = l_iterator->Invoke(a_Args...);
-					}
-
-					if (typeid(T_RET_TYPE) != typeid(void))
-					{
-						return l_tReturn;
+						if (m_bIsReturnable && (l_LastIterator == l_iterator))
+						{
+							return l_iterator->Invoke(a_Args...);
+						}else
+						{ 
+							l_iterator->Invoke(a_Args...);
+						}
 					}
 				}
 				catch (std::out_of_range& a_Exception)
