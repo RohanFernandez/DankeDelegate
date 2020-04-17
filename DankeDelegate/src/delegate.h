@@ -77,9 +77,34 @@ namespace ns_fretBuzz
 				}
 			}
 
+			///+= operator overloading to add actions of a delegate
+			void operator+=(Delegate<T_RET_TYPE(T_ARGS...)>& a_Delegate)
+			{
+				Add(a_Delegate);
+			}
+
+			friend static Delegate<T_RET_TYPE(T_ARGS...)> operator+(Delegate<T_RET_TYPE(T_ARGS...)> a_Delegate1, Delegate<T_RET_TYPE(T_ARGS...)> a_Delegate2)
+			{
+				a_Delegate1 += a_Delegate2;
+				return a_Delegate1;
+			}
+
+			///operator overload to remove actions in a delegate
+			void operator-=(Delegate<T_RET_TYPE(T_ARGS...)>& a_Delegate)
+			{
+				Remove(a_Delegate);
+			}
+
 			T_RET_TYPE operator()(T_ARGS... a_Args)
 			{
-				return Invoke(a_Args...);
+				if (m_bIsReturnable)
+				{
+					return Invoke(a_Args...);
+				}
+				else
+				{
+					Invoke(a_Args...);
+				}
 			}
 
 			///Calls all the actions stored within the delegate

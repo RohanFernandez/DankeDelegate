@@ -34,7 +34,7 @@ int printThis4(int a_iPrintNum)
 
 void executeDelegate(ns_fretBuzz::Delegate<int(int)> a_Delegate, int a_iPrintNum)
 {
-	std::cout<<"\t\t"<<a_Delegate.Invoke(a_iPrintNum)<<"\n";
+	std::cout<<"\t\t"<<a_Delegate(a_iPrintNum)<<"\n";
 }
 
 int main()
@@ -54,12 +54,15 @@ int main()
 	fuzzDele1.Add<&doClass::printThis3>();
 	fuzzDele1.Add <&printThis4>();
 
+	executeDelegate(fuzzDele + fuzzDele1, 777);
+	system("pause");
+
 	executeDelegate(fuzzDele, 666);
 
 	system("pause");
 
 	fuzzDele.Remove<&printThis4>();
-	executeDelegate(fuzzDele,667);
+	executeDelegate(fuzzDele1,667);
 
 	system("pause");
 
@@ -77,9 +80,8 @@ int main()
 	executeDelegate(fuzzDele, 669);
 
 	system("pause");
-
-	fuzzDele.Add(fuzzDele1);
-	executeDelegate(fuzzDele, 666);
+	
+	executeDelegate(fuzzDele + fuzzDele1, 777);
 	system("pause");
 
 	fuzzDele1.Remove<doClass, &doClass::printThis1>(&testDoClass);
