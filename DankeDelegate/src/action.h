@@ -2,8 +2,10 @@
 //repository : https://github.com/RohanFernandez/DankeDelegate
 
 #pragma once
+#include <stdexcept>
+#include <iostream>
 
-namespace ns_fretBuzz
+namespace FretBuzz
 {
 	template<typename T1> class Action;
 
